@@ -36,7 +36,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('lightplays_bot.log'),
+        logging.FileHandler('EvoriNodes_bot.log'),
         logging.StreamHandler()
     ]
 )
