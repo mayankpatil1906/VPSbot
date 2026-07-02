@@ -366,7 +366,7 @@ class Database:
         self.conn.close()
 
 # Initialize bot with command prefix '/'
-class LightplaysBot(commands.Bot):
+class EvoriNodesBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.db = Database(DB_FILE)
@@ -646,7 +646,7 @@ async def build_custom_image(vps_id, username, root_password, user_password, bas
             logger.error(f"Error cleaning up temp directory: {e}")
 
 async def setup_container(container_id, status_msg, memory, username, vps_id=None, use_custom_image=False):
-    """Enhanced container setup with Lightplays customization"""
+    """Enhanced container setup with EvoriNodes customization"""
     try:
         # Ensure container is running
         if isinstance(status_msg, discord.Interaction):
@@ -990,7 +990,7 @@ async def create_vps_command(ctx, memory: int, cpu: int, disk: int, owner: disco
                     image_tag,
                     detach=True,
                     privileged=True,
-                    hostname=f"lightplays-{vps_id}",
+                    hostname=f"EvoriNodes-{vps_id}",
                     mem_limit=memory_bytes,
                     cpu_period=100000,
                     cpu_quota=int(cpu * 100000),
@@ -1020,7 +1020,7 @@ async def create_vps_command(ctx, memory: int, cpu: int, disk: int, owner: disco
                     tty=True,
                     network=DOCKER_NETWORK,
                     volumes={
-                        f'lightplays-{vps_id}': {'bind': '/data', 'mode': 'rw'}
+                        f'EvoriNodes-{vps_id}': {'bind': '/data', 'mode': 'rw'}
                     },
                     restart_policy={"Name": "always"}
                 )
@@ -1030,7 +1030,7 @@ async def create_vps_command(ctx, memory: int, cpu: int, disk: int, owner: disco
                     DEFAULT_OS_IMAGE,
                     detach=True,
                     privileged=True,
-                    hostname=f"lightplays-{vps_id}",
+                    hostname=f"EvoriNodes-{vps_id}",
                     mem_limit=memory_bytes,
                     cpu_period=100000,
                     cpu_quota=int(cpu * 100000),
@@ -1106,7 +1106,7 @@ async def create_vps_command(ctx, memory: int, cpu: int, disk: int, owner: disco
                 embed.add_field(name="🔑 Root Password", value=f"||{root_password}||", inline=False)
             embed.add_field(name="🔒 Tmate Session", value=f"```{ssh_session_line}```", inline=False)
             embed.add_field(name="🔌 Direct SSH", value=f"```ssh {username}@<server-ip>```", inline=False)
-            embed.add_field(name="ℹ️ Note", value="This is a Lightplays VPS instance. You can install and configure additional packages as needed.", inline=False)
+            embed.add_field(name="ℹ️ Note", value="This is a EvoriNodes VPS instance. You can install and configure additional packages as needed.", inline=False)
             
             await owner.send(embed=embed)
             await status_msg.edit(content=f"✅ EvoriNodes VPS creation successful! VPS has been created for {owner.mention}. Check your DMs for connection details.")
@@ -1961,7 +1961,7 @@ async def edit_vps(ctx, vps_id: str, memory: Optional[int] = None, cpu: Optional
                 tty=True,
                 network=DOCKER_NETWORK,
                 volumes={
-                    f'lightplays-{vps_id}': {'bind': '/data', 'mode': 'rw'}
+                    f'EvoriNodes-{vps_id}': {'bind': '/data', 'mode': 'rw'}
                 },
                 restart_policy={"Name": "always"}
             )
@@ -2210,7 +2210,7 @@ class VPSManagementView(ui.View):
             if token:
                 bot.db.update_vps(token, {'status': 'stopped'})
             
-            embed = discord.Emembed(title=f"Lightplays VPS Management - {self.vps_id}", color=discord.Color.orange())
+            embed = discord.Emembed(title=f"EvoriNodes VPS Management - {self.vps_id}", color=discord.Color.orange())
             embed.add_field(name="Status", value="🔴 Stopped", inline=True)
             
             if vps:
@@ -2221,7 +2221,7 @@ class VPSManagementView(ui.View):
                 embed.add_field(name="Created", value=vps['created_at'], inline=True)
             
             await interaction.message.edit(embed=embed)
-            await interaction.followup.send("✅ Lightplays VPS stopped successfully!", ephemeral=True)
+            await interaction.followup.send("✅ EvoriNodes VPS stopped successfully!", ephemeral=True)
         except Exception as e:
             await interaction.followup.send(f"❌ Error stopping VPS: {str(e)}", ephemeral=True)
 
@@ -2270,7 +2270,7 @@ class VPSManagementView(ui.View):
                         # Send new SSH details to owner
                         try:
                             owner = await bot.fetch_user(int(vps["created_by"]))
-                            embed = discord.Embed(title=f"Lightplays VPS Restarted - {self.vps_id}", color=discord.Color.blue())
+                            embed = discord.Embed(title=f"EvoriNodes VPS Restarted - {self.vps_id}", color=discord.Color.blue())
                             embed.add_field(name="New SSH Session", value=f"```{ssh_session_line}```", inline=False)
                             await owner.send(embed=embed)
                         except:
@@ -2278,7 +2278,7 @@ class VPSManagementView(ui.View):
                 except:
                     pass
             
-            embed = discord.Embed(title=f"Lightplays VPS Management - {self.vps_id}", color=discord.Color.green())
+            embed = discord.Embed(title=f"EvoriNodes VPS Management - {self.vps_id}", color=discord.Color.green())
             embed.add_field(name="Status", value="🟢 Running", inline=True)
             
             if vps:
@@ -2290,7 +2290,7 @@ class VPSManagementView(ui.View):
                 embed.add_field(name="Restart Count", value=vps.get('restart_count', 0) + 1, inline=True)
             
             await interaction.message.edit(embed=embed, view=VPSManagementView(self.vps_id, container.id))
-            await interaction.followup.send("✅ Lightplays VPS restarted successfully! New SSH details sent to owner.", ephemeral=True)
+            await interaction.followup.send("✅ EvoriNodes VPS restarted successfully! New SSH details sent to owner.", ephemeral=True)
         except Exception as e:
             await interaction.followup.send(f"❌ Error restarting VPS: {str(e)}", ephemeral=True)
 
@@ -2352,7 +2352,7 @@ class OSSelectionView(ui.View):
             except Exception as e:
                 logger.error(f"Error removing old container: {e}")
 
-            status_msg = await interaction.followup.send("🔄 Reinstalling Lightplays VPS... This may take a few minutes.", ephemeral=True)
+            status_msg = await interaction.followup.send("🔄 Reinstalling EvoriNodes VPS... This may take a few minutes.", ephemeral=True)
             
             memory_bytes = vps['memory'] * 1024 * 1024 * 1024
 
@@ -2361,7 +2361,7 @@ class OSSelectionView(ui.View):
                     image,
                     detach=True,
                     privileged=True,
-                    hostname=f"lightplays-{self.vps_id}",
+                    hostname=f"EvoriNodes-{self.vps_id}",
                     mem_limit=memory_bytes,
                     cpu_period=100000,
                     cpu_quota=int(vps['cpu'] * 100000),
@@ -2428,7 +2428,7 @@ class OSSelectionView(ui.View):
                     # Send new SSH details to owner
                     try:
                         owner = await bot.fetch_user(int(vps["created_by"]))
-                        embed = discord.Embed(title=f"Lightplays VPS Reinstalled - {self.vps_id}", color=discord.Color.blue())
+                        embed = discord.Embed(title=f"EvoriNodes VPS Reinstalled - {self.vps_id}", color=discord.Color.blue())
                         embed.add_field(name="New OS", value=image, inline=True)
                         embed.add_field(name="New SSH Session", value=f"```{ssh_session_line}```", inline=False)
                         embed.add_field(name="New SSH Password", value=f"||{ssh_password}||", inline=False)
@@ -2438,10 +2438,10 @@ class OSSelectionView(ui.View):
             except Exception as e:
                 logger.error(f"Warning: Failed to start tmate session: {e}")
 
-            await status_msg.edit(content="✅ Lightplays VPS reinstalled successfully!")
+            await status_msg.edit(content="✅ EvoriNodes VPS reinstalled successfully!")
             
             try:
-                embed = discord.Embed(title=f"Lightplays VPS Management - {self.vps_id}", color=discord.Color.green())
+                embed = discord.Embed(title=f"EvoriNodes VPS Management - {self.vps_id}", color=discord.Color.green())
                 embed.add_field(name="Status", value="🟢 Running", inline=True)
                 embed.add_field(name="Memory", value=f"{vps['memory']}GB", inline=True)
                 embed.add_field(name="CPU", value=f"{vps['cpu']} cores", inline=True)
@@ -2529,10 +2529,10 @@ class TransferVPSModal(ui.Modal, title='Transfer VPS'):
 
             bot.db.update_vps(token, {"created_by": str(new_owner.id)})
 
-            await interaction.response.send_message(f"✅ Lightplays VPS {self.vps_id} has been transferred from {old_owner_name} to {new_owner_name}!", ephemeral=True)
+            await interaction.response.send_message(f"✅ EvoriNodes VPS {self.vps_id} has been transferred from {old_owner_name} to {new_owner_name}!", ephemeral=True)
             
             try:
-                embed = discord.Embed(title="Lightplays VPS Transferred to You", color=discord.Color.green())
+                embed = discord.Embed(title="EvoriNodes VPS Transferred to You", color=discord.Color.green())
                 embed.add_field(name="VPS ID", value=self.vps_id, inline=True)
                 embed.add_field(name="Previous Owner", value=old_owner_name, inline=True)
                 embed.add_field(name="Memory", value=f"{vps['memory']}GB", inline=True)
@@ -2569,7 +2569,7 @@ async def manage_vps(ctx, vps_id: str):
 
         status = vps['status'].capitalize()
 
-        embed = discord.Embed(title=f"Lightplays VPS Management - {vps_id}", color=discord.Color.blue())
+        embed = discord.Embed(title=f"EvoriNodes VPS Management - {vps_id}", color=discord.Color.blue())
         embed.add_field(name="Status", value=f"{status} (Container: {container_status})", inline=True)
         embed.add_field(name="Memory", value=f"{vps['memory']}GB", inline=True)
         embed.add_field(name="CPU", value=f"{vps['cpu']} cores", inline=True)
@@ -2611,10 +2611,10 @@ async def transfer_vps_command(ctx, vps_id: str, new_owner: discord.Member):
 
         bot.db.update_vps(token, {"created_by": str(new_owner.id)})
 
-        await ctx.send(f"✅ Lightplays VPS {vps_id} has been transferred from {ctx.author.name} to {new_owner.name}!")
+        await ctx.send(f"✅ EvoriNodes VPS {vps_id} has been transferred from {ctx.author.name} to {new_owner.name}!")
 
         try:
-            embed = discord.Embed(title="Lightplays VPS Transferred to You", color=discord.Color.green())
+            embed = discord.Embed(title="EvoriNodes VPS Transferred to You", color=discord.Color.green())
             embed.add_field(name="VPS ID", value=vps_id, inline=True)
             embed.add_field(name="Previous Owner", value=ctx.author.name, inline=True)
             embed.add_field(name="Memory", value=f"{vps['memory']}GB", inline=True)
